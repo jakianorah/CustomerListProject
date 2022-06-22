@@ -28,9 +28,9 @@ namespace CustomerListProject.Controllers
         [HttpPost()]
         public IActionResult FileUpload(IFormFile uploadFile, int sortField)
         {
-            var lines = ReadFileData(uploadFile);
-            var uploadResults = ParseData(lines.Result);
-            var sortedResults = sortField == (int)SortFieldEnum.FullName ? SortyByFullName(uploadResults) : SortyByVehicleType(uploadResults);
+            var linesInFile = ReadFileData(uploadFile);
+            var uploadedDataResult = ParseData(linesInFile.Result);
+            var sortedResults = sortField == (int)SortFieldEnum.FullName ? SortyByFullName(uploadedDataResult) : SortyByVehicleType(uploadedDataResult);
             return View("~/Views/Home/Index.cshtml", sortedResults);
 
         }
@@ -43,7 +43,7 @@ namespace CustomerListProject.Controllers
                 using (var stream = new FileStream(filePath, FileMode.Create))
                 {
                     await uploadFile.CopyToAsync(stream);
-                    stream.Position = 0;
+                    stream.Position = 0; //set stream to beginning
                     using var sr = new StreamReader(stream);
                     List<string> lines = new List<string>();
 
@@ -71,7 +71,7 @@ namespace CustomerListProject.Controllers
                 var uploadResults = new List<UploadViewModel>();
                 foreach (var line in lines)
                 {
-                    uploadResults.Add(ParseCustomer(line));
+                    uploadResults.Add(GetCustomerData(line));
                 }
                 return uploadResults;
             }
@@ -82,18 +82,25 @@ namespace CustomerListProject.Controllers
             
         }
 
-        public UploadViewModel ParseCustomer(string contents)
+        public UploadViewModel GetCustomerData(string customerString)
         {
             try
             {
-                var newContent = contents.Split(',', '|');
-                var fullName = newContent[(int)CustomerDataEnum.FirstName] + " " + newContent[(int)CustomerDataEnum.LastName];
-                var email = newContent[(int)CustomerDataEnum.Email];
-                var vehicleType = newContent[(int)CustomerDataEnum.VehicleType];
-                var vehicleName = newContent[(int)CustomerDataEnum.VehicleName];
-                var vehicleLength = newContent[(int)CustomerDataEnum.VehicleLength];
+                var customerFields = customerString.Split(',', '|');
+                var fullName = customerFields[(int)CustomerDataEnum.FirstName] + " " + customerFields[(int)CustomerDataEnum.LastName];
+                var email = customerFields[(int)CustomerDataEnum.Email];
+                var vehicleType = customerFields[(int)CustomerDataEnum.VehicleType];
+                var vehicleName = customerFields[(int)CustomerDataEnum.VehicleName];
+                var vehicleLength = customerFields[(int)CustomerDataEnum.VehicleLength];
 
-                return new UploadViewModel { FullName = fullName, Email = email, VehicleType = vehicleType, VehicleName = vehicleName, VehicleLength = vehicleLength };
+                return new UploadViewModel { 
+
+                    FullName = fullName, 
+                    Email = email, 
+                    VehicleType = vehicleType, 
+                    VehicleName = vehicleName, 
+                    VehicleLength = vehicleLength 
+                };
             }
             catch (Exception)
             {
