@@ -1,0 +1,66 @@
+﻿@model IEnumerable<CustomerListProject.Models.UploadViewModel>
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<h1>Upload File</h1>
+<div class="row">
+    <section>
+        <form method="post" enctype="multipart/form-data"
+              asp-controller="Home" asp-action="FileUpload">
+            <div class="form-group">
+                <div class="col-md-10">
+                    <p>Upload a file using this form:</p>
+                    <input type="file" name="uploadFile" />
+                    <label for="sortField">Sort By:</label>
+<select id="sortField" name="sortField">
+  <option value="0">Full Name</option>
+  <option value="1">Vehicle Type</option>
+</select>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-10">
+                    <input type="submit" value="Upload" />
+                </div>
+            </div>
+        </form>
+    </section>
+
+    @if(Model != null ){
+        <h4>Upload Results</h4>
+   <table class="table">
+    <tr>
+    <th>Full Name</th>
+    <th>Email</th>
+    <th>Vehicle type</th>
+    <th>Vehicle Name</th>
+    <th>Vehicle Length</th>
+  </tr>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                <span>@item.FullName</span>
+            </td>
+            <td>
+                <span>@item.Email</span>
+            </td>
+            <td>
+                <span>@item.VehicleType</span>
+            </td>
+            <td>
+                <span>@item.VehicleName</span>
+            </td>
+            <td>
+                <span>@item.VehicleLength</span>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+
+    
+    }
+    
+</div>
