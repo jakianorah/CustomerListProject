@@ -9,9 +9,11 @@
         <form method="post" enctype="multipart/form-data"
               asp-controller="Home" asp-action="FileUpload">
             <div class="form-group">
-                <div class="col-md-10">
+                <div class="col-md-10 m-3">
                     <p>Upload a file using this form:</p>
                     <input type="file" name="uploadFile" />
+                </div>
+                <div class="col-md-10 m-3">
                     <label for="sortField">Sort By:</label>
                     <select id="sortField" name="sortField">
                       <option value="0">Full Name</option>
@@ -20,7 +22,7 @@
                 </div>
             </div>
             <div class="form-group">
-                <div class="col-md-10">
+                <div class="col-md-10 m-3">
                     <input type="submit" value="Upload" />
                 </div>
             </div>
