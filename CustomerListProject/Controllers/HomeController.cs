@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using CustomerListProject.Enums;
-using System.IO;
 
 namespace CustomerListProject.Controllers
 {
@@ -38,46 +37,69 @@ namespace CustomerListProject.Controllers
 
         public async Task<List<string>> ReadFileData(IFormFile uploadFile)
         {
-            var filePath = Path.GetTempFileName();
-            using (var stream = new FileStream(filePath, FileMode.Create))
+            try
             {
-                await uploadFile.CopyToAsync(stream);
-                stream.Position = 0;
-                using var sr = new StreamReader(stream);
-                List<string> lines = new List<string>();
-
-                string? line;
-
-                while ((line = sr.ReadLine()) != null)
+                var filePath = Path.GetTempFileName();
+                using (var stream = new FileStream(filePath, FileMode.Create))
                 {
-                    lines.Add(line);
+                    await uploadFile.CopyToAsync(stream);
+                    stream.Position = 0;
+                    using var sr = new StreamReader(stream);
+                    List<string> lines = new List<string>();
+
+                    string? line;
+
+                    while ((line = sr.ReadLine()) != null)
+                    {
+                        lines.Add(line);
+                    }
+                    return lines;
                 }
-                return lines;
             }
+            catch (Exception)
+            {
+                throw;
+            }
+            
             
         }
 
         public List<UploadViewModel> ParseData(List<string> lines)
         {
-            var uploadResults = new List<UploadViewModel>();
-            foreach (var line in lines)
+            try
             {
-                uploadResults.Add(ParseCustomer(line));
+                var uploadResults = new List<UploadViewModel>();
+                foreach (var line in lines)
+                {
+                    uploadResults.Add(ParseCustomer(line));
+                }
+                return uploadResults;
             }
-            return uploadResults;
+            catch (Exception)
+            {
+                throw;
+            }
+            
         }
 
         public UploadViewModel ParseCustomer(string contents)
         {
+            try
+            {
+                var newContent = contents.Split(',', '|');
+                var fullName = newContent[(int)CustomerDataEnum.FirstName] + " " + newContent[(int)CustomerDataEnum.LastName];
+                var email = newContent[(int)CustomerDataEnum.Email];
+                var vehicleType = newContent[(int)CustomerDataEnum.VehicleType];
+                var vehicleName = newContent[(int)CustomerDataEnum.VehicleName];
+                var vehicleLength = newContent[(int)CustomerDataEnum.VehicleLength];
 
-            var newContent = contents.Split(',', '|');
-            var fullName = newContent[0] + " " + newContent[1];
-            var email = newContent[2];
-            var vehicleType = newContent[3];
-            var vehicleName = newContent[4];
-            var vehicleLength = newContent[5];
-
-            return new UploadViewModel { FullName = fullName, Email = email, VehicleType = vehicleType, VehicleName = vehicleName, VehicleLength = vehicleLength };
+                return new UploadViewModel { FullName = fullName, Email = email, VehicleType = vehicleType, VehicleName = vehicleName, VehicleLength = vehicleLength };
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+           
         }
         public List<UploadViewModel> SortyByFullName(List<UploadViewModel> uploadData)
         {
